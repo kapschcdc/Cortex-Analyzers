@@ -26,7 +26,7 @@ class RecordedFutureAnalyzer(Analyzer):
         if criticality == 0:
             level = 'safe'
         elif criticality == 1:
-            level = 'info'
+            level = 'suspicious'
         elif criticality == 2:
             level = 'suspicious'
         elif criticality >= 3:
@@ -42,7 +42,7 @@ class RecordedFutureAnalyzer(Analyzer):
 
     def warning(self, message):
         taxonomies = []
-        taxonomies.append(self.build_taxonomy('suspicious', self.taxonomy_namespace, 'warning', message))
+        taxonomies.append(self.build_taxonomy('info', self.taxonomy_namespace, '', message))
         return {"taxonomies": taxonomies}
 
     def run(self):
@@ -56,7 +56,7 @@ class RecordedFutureAnalyzer(Analyzer):
                     return self.report(j)
             except urllib.error.HTTPError as e:
                 if e.code == HTTPStatus.NOT_FOUND:
-                    warning = self.warning('na (404)')
+                    warning = self.warning('unknown')
                     report = {
                         'success': True,
                         'summary': warning,
