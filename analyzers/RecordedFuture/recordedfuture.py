@@ -68,13 +68,13 @@ class RecordedFutureAnalyzer(Analyzer):
                             'url': url
                         }
                     }
-                    json.dump(report, self.fpoutput, ensure_ascii=False)
+                    return json.dump(report, self.fpoutput, ensure_ascii=False)
                 else:
-                    self.error(str(e))
+                    return self.error(str(e))
             except urllib.error.URLError as e:
-                self.error(str(e))
+                return self.error(str(e))
         else:
-            self.error('Invalid data type')
+            return self.error('Invalid data type')
 
 if __name__ == '__main__':
     RecordedFutureAnalyzer().run()
