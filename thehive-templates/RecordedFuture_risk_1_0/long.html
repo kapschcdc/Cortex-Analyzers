@@ -1,5 +1,5 @@
 <!-- Success -->
-<div class="panel panel-info" ng-if="success">
+<div class="panel panel-info" ng-if="success && content.data">
     <div class="panel-heading">
         <strong>Summary</strong>
     </div>
@@ -38,6 +38,24 @@
                 <td class="wrap">{{evidence.evidenceString}}</td>
             </tr>
         </table>
+    </div>
+</div>
+
+<!-- Warning (eg. 404)  -->
+<div class="panel panel-warning" ng-if="success && content.warning">
+    <div class="panel-heading">
+        <strong>{{(artifact.data || artifact.attachment.name) | fang}}</strong>
+    </div>
+    <div class="panel-body">
+        <div class="alert alert-warning" ng-if="content.type == 404">
+            <i class="fa fa-warning" /> No data found for the requested observable.
+        </div>
+        <dl class="dl-horizontal">
+            <dt>Warning message:</dt>
+            <dd class="wrap">{{content.message}}</dd>
+            <dt>Requested URL:</dt>
+            <dd class="wrap">{{content.url}}</dd>
+        </dl>
     </div>
 </div>
 

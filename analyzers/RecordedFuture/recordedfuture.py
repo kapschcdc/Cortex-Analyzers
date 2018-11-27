@@ -4,9 +4,13 @@
 from cortexutils.analyzer import Analyzer
 
 import urllib.request
+import urllib.error
 import json
+from http import HTTPStatus
 
 class RecordedFutureAnalyzer(Analyzer):
+    taxonomy_namespace = 'RF'
+
     def __init__(self):
         Analyzer.__init__(self)
         self.recordedfuture_key = self.get_param('config.key', None, 'Missing RecordedFuture API key')
@@ -14,7 +18,6 @@ class RecordedFutureAnalyzer(Analyzer):
 
     def summary(self, raw):
         taxonomies = []
-        namespace = 'RF'
 
         level = 'info'
         predicate = 'score'
@@ -28,13 +31,18 @@ class RecordedFutureAnalyzer(Analyzer):
             level = 'suspicious'
         elif criticality >= 3:
             level = 'malicious'
-        taxonomies.append(self.build_taxonomy(level, namespace, predicate, value))
+        taxonomies.append(self.build_taxonomy(level, self.taxonomy_namespace, predicate, value))
 
         level = 'info'
         predicate = '#evidenceDetails'
         value = str(len(raw['data']['risk']['evidenceDetails']))
-        taxonomies.append(self.build_taxonomy(level, namespace, predicate, value))
+        taxonomies.append(self.build_taxonomy(level, self.taxonomy_namespace, predicate, value))
 
+        return {"taxonomies": taxonomies}
+
+    def warning(self, message):
+        taxonomies = []
+        taxonomies.append(self.build_taxonomy('suspicious', self.taxonomy_namespace, 'warning', message))
         return {"taxonomies": taxonomies}
 
     def run(self):
@@ -45,9 +53,25 @@ class RecordedFutureAnalyzer(Analyzer):
             try:
                 with urllib.request.urlopen(req) as res:
                     j = json.loads(res.read().decode("utf-8"))
-                    self.summary(j)
                     return self.report(j)
-            except IOError as e:
+            except urllib.error.HTTPError as e:
+                if e.code == HTTPStatus.NOT_FOUND:
+                    warning = self.warning('na (404)')
+                    report = {
+                        'success': True,
+                        'summary': warning,
+                        'artifacts': None,
+                        'full': {
+                            'warning': True,
+                            'type': 404,
+                            'message': str(e),
+                            'url': url
+                        }
+                    }
+                    json.dump(report, self.fpoutput, ensure_ascii=False)
+                else:
+                    self.error(str(e))
+            except urllib.error.URLError as e:
                 self.error(str(e))
         else:
             self.error('Invalid data type')
