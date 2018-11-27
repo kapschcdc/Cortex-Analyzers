@@ -65,8 +65,11 @@
         <strong>{{(artifact.data || artifact.attachment.name) | fang}}</strong>
     </div>
     <div class="panel-body">
+        <div class="alert alert-danger">
+            <i class="fa fa-warning" /> Error!
+        </div>
         <dl class="dl-horizontal" ng-if="content.errorMessage">
-            <dt><i class="fa fa-warning"></i>Error:</dt>
+            <dt>Error:</dt>
             <dd class="wrap">{{content.errorMessage}}</dd>
         </dl>
     </div>
