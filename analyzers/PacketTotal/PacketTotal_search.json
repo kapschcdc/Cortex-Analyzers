@@ -1,0 +1,20 @@
+{
+  "name": "PacketTotal_search",
+  "version": "0.1",
+  "author": "KAPSCH-CDC",
+  "url": "https://github.com/kapschcdc/Cortex-Analyzers",
+  "license": "AGPL-V3",
+  "description": "Search for pcap matches on PacketTotal and fetch associated categories.",
+  "dataTypeList": ["domain", "ip", "hash"],
+  "command": "PacketTotal/packettotal.py",
+  "baseConfig": "PacketTotal",
+  "configurationItems": [
+    {
+      "name": "key",
+      "description": "API key for PacketTotal",
+      "type": "string",
+      "multi": false,
+      "required": true
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+<!-- Success -->
+<div class="panel panel-info" ng-if="success">
+    <div class="panel-heading">
+        <strong>Summary</strong>
+    </div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>Matches</dt>
+            <dd>{{content.result_count}}</dd>
+        </dl>
+        <dl class="dl-horizontal">
+            <dt>Categories</dt>
+            <dd>
+                <span ng-repeat="category in content.categories"
+                    ng-class="
+                        {
+                            malicious: 'label-danger',
+                            suspicious: 'label-warning',
+                            info: 'label-info'
+                        }[category.level]"
+                    class="label"
+                    style="margin-right: 5px;">{{category.name}}</span>
+            </dd>
+        </dl>
+        <a href="https://packettotal.com/app/search?q={{artifact.data}}" target="_blank" class="btn btn-primary" role="button">Show results in PacketTotal App</a>
+    </div>
+    <div class="panel-heading">
+        <strong>Results</strong>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover">
+            <tr>
+                <th>ID</th>
+                <th>found_in</th>
+                <th>match_score</th>
+            </tr>
+            <tr ng-repeat="result in content.results">
+                <td><a href="https://packettotal.com/app/analysis?id={{result.id}}" target="_blank">{{result.id}}</a></td>
+                <td>
+                    <span ng-repeat="category in result.found_in"
+                        ng-class="
+                            {
+                                malicious: 'label-danger',
+                                suspicious: 'label-warning',
+                                info: 'label-info'
+                            }[category.level]"
+                        class="label"
+                        style="margin-right: 5px;">{{category.name}}</span>
+                </td>
+                <td>{{result.match_score}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- General error  -->
+<div class="panel panel-danger" ng-if="!success">
+    <div class="panel-heading">
+        <strong>{{(artifact.data || artifact.attachment.name) | fang}}</strong>
+    </div>
+    <div class="panel-body">
+        <div class="alert alert-danger">
+            <i class="fa fa-warning" /> Error!
+        </div>
+        <dl class="dl-horizontal" ng-if="content.errorMessage">
+            <dt>Error:</dt>
+            <dd class="wrap">{{content.errorMessage}}</dd>
+        </dl>
+    </div>
+</div>
